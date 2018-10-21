@@ -1,20 +1,15 @@
 .cell {
   width: 35px;
   height: 35px;
-  background-position: center !important;
-  background-repeat: no-repeat !important;
   background-size: cover !important;
 }
-
-.cell.covered {background: url('../images/facingDown.png');}
-.cell.flagged { background: url('../images/flag.png') !important; }
+.cell.covered { background: url('../images/facingDown.png') center no-repeat; }
+.cell.covered:hover { cursor: pointer; }
 .cell.bomb { background: url('../images/bomb.png') !important; }
-
-.cell.covered:hover {
-  /* border: 1.5px inset #aaa; */
-  cursor: pointer;
+.cell.flagged {
+  background: url('../images/flagged.png') center no-repeat !important;
+  background-size: cover !important;
 }
-
 .cell.uncovered.blank_0 { background: url('../images/0.png'); }
 .cell.uncovered.blank_1 { background: url('../images/1.png'); }
 .cell.uncovered.blank_2 { background: url('../images/2.png'); }

@@ -36,11 +36,13 @@ function drawCells() {
       $('.container').append(cell.HTML);
     }
   }
-  $('.cell.covered').mousedown(function(event) {
+  $('.cell.covered').bind("contextmenu",function(e){
+    return false;
+  }).mousedown(function(event) {
     let cell = findCell($(this).attr('cellID'));
     if(event.which == 3) {
-      $(this).addClass('flagged');
-      cell.state = 'flagged';
+      $(this).toggleClass('flagged');
+      cell.state = $(this).hasClass('flagged')?'flagged':'covered';
     } else {
       let cell = findCell($(this).attr('cellID'));
       if(cell.isBomb) endGame(); //TODO//
