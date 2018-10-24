@@ -9,40 +9,40 @@ class Cell {
     this.surroundingBombs = 0;
     this.isBomb = false;
     this.state = 'covered';
-    this.HTML = `<a class="cell covered" cellID="${this.cellID}" row="${this.row}" col="${this.col}"></a>`;
+    this.HTML = `<div class="cell covered" cellID="${this.cellID}" row="${this.row}" col="${this.col}"></div>`;
   }
 
   getSurroundingBombs() {
-    for(let i = 0, row, col, cellID=0; i < 8; i++) {
-      switch(i) {
-        case 0: if(this.col > 1 && this.row > 1) { row = (this.row-1); col = (this.col-1); cellID = (width*row)-(width-col); } else continue; break;
-        case 1: if(this.row > 1) { row = (this.row-1); cellID = (width*row)-(width-this.col); } else continue; break;
-        case 2: if(this.col < width && this.row > 1) { row = (this.row-1); col = (this.col+1); cellID = (width*row)-(width-col); } else continue; break;
-        case 3: if(this.col < width) { col = (this.col+1); cellID = (width*this.row)-(width-col); } else continue; break;
-        case 4: if(this.col < width && this.row < height) { row = (this.row+1); col = (this.col+1); cellID = (width*row)-(width-col); } else continue; break;
-        case 5: if(this.row < height) { row = (this.row+1); cellID = (width*row)-(width-this.col); } else continue; break;
-        case 6: if(this.col > 1 && this.row < height) { row = (this.row+1); col = (this.col-1); cellID = (width*row)-(width-col); } else continue; break;
-        case 7: if(this.col > 1) { col = (this.col-1); cellID = (width*this.row)-(width-col); } else continue; break;
-      }
+    for(let i = 0, cellID; i < 8; i++) {
+      cellID = surround(this, i);
+      if(cellID === 'continue') continue;
       let cell = findCell(cellID);
       if(cell) if(cell.isBomb) this.surroundingBombs++;
     }
   }
   getSurroundingBlanks() {
-    for(var i = 0, row, col, cellID; i < 8; i++) {
-      switch(i) {
-        case 0: if(this.col > 1 && this.row > 1) { row = (this.row-1); col = (this.col-1); cellID = (width*row)-(width-col); } else continue; break;
-        case 1: if(this.row > 1) { row = (this.row-1); cellID = (width*row)-(width-this.col); } else continue; break;
-        case 2: if(this.col < width && this.row > 1) { row = (this.row-1); col = (this.col+1); cellID = (width*row)-(width-col); } else continue; break;
-        case 3: if(this.col < width) { col = (this.col+1); cellID = (width*this.row)-(width-col); } else continue; break;
-        case 4: if(this.col < width && this.row < height) { row = (this.row+1); col = (this.col+1); cellID = (width*row)-(width-col); } else continue; break;
-        case 5: if(this.row < height) { row = (this.row+1); cellID = (width*row)-(width-this.col); } else continue; break;
-        case 6: if(this.col > 1 && this.row < height) { row = (this.row+1); col = (this.col-1); cellID = (width*row)-(width-col); } else continue; break;
-        case 7: if(this.col > 1) { col = (this.col-1); cellID = (width*this.row)-(width-col); } else continue; break;
-      }
+    for(var i = 0, cellID; i < 8; i++) {
+      cellID = surround(this, i);
+      if(cellID === 'continue') continue;
       $(`.cell[cellID="${cellID}"]`).mousedown();
     }
   }
+}
+
+
+function surround(obj, i) {
+  let row, col, cellID;
+  switch(i) {
+    case 0: if(obj.col > 1 && obj.row > 1) { row = (obj.row-1); col = (obj.col-1); cellID = (width*row)-(width-col); } else return 'continue'; break;
+    case 1: if(obj.row > 1) { row = (obj.row-1); cellID = (width*row)-(width-obj.col); } else return 'continue'; break;
+    case 2: if(obj.col < width && obj.row > 1) { row = (obj.row-1); col = (obj.col+1); cellID = (width*row)-(width-col); } else return 'continue'; break;
+    case 3: if(obj.col < width) { col = (obj.col+1); cellID = (width*obj.row)-(width-col); } else return 'continue'; break;
+    case 4: if(obj.col < width && obj.row < height) { row = (obj.row+1); col = (obj.col+1); cellID = (width*row)-(width-col); } else return 'continue'; break;
+    case 5: if(obj.row < height) { row = (obj.row+1); cellID = (width*row)-(width-obj.col); } else return 'continue'; break;
+    case 6: if(obj.col > 1 && obj.row < height) { row = (obj.row+1); col = (obj.col-1); cellID = (width*row)-(width-col); } else return 'continue'; break;
+    case 7: if(obj.col > 1) { col = (obj.col-1); cellID = (width*obj.row)-(width-col); } else return 'continue'; break;
+  }
+  return cellID;
 }
 
 function findCell(cellID) {
