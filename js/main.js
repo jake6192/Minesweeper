@@ -1,16 +1,45 @@
-const width = 15;
-const height = 20;
-const bombs = 80;
+let game = new Game(), width, height, totalCells, bombs;
 
-$(document).ready(function() {
+$(document).ready(newGame);
+$('.face').click(newGame);
+
+function newGame() {
+  $('.container').html('');
+  width = +$('#width').val();
+  height = +$('#height').val();
+  bombs = +$('#bombs').val();
+  totalCells = width*height;
+  if(bombs > totalCells) {
+    endGame();
+    game.gameState = 'ended';
+    bombs = 80;
+    $('#bombs').css({'background-color':'rgb(255,30, 60)'});
+    return;
+  }
   writeCSS();
   drawCells();
   fillBombs();
   setupCells();
-});
+  game.gameState = 'playing';
+}
+
+function completeGame() {
+  $('.covered').addClass('bomb');
+  $('.face > img').attr({'src':'images/face2.png'});
+}
 
 function endGame() {
-  // alert('endgame');
+  let covered = $('.covered');
+  for(var i = 0; i < covered.length; i++) {
+    let cell = findCell($(covered[i]).attr('cellID'));
+    if(!cell.isBomb) {
+      $(`.cell[cellID="${cell.cellID}"]`).removeClass('covered').addClass(getClass(cell.surroundingBombs));
+    } else {
+      $(`.cell[cellID="${cell.cellID}"]`).addClass('bomb');
+      $('.button#newGame').show();
+      $('.face > img').attr({'src':'images/face3.png'});
+    }
+  }
 }
 
 function writeCSS() {
@@ -45,12 +74,14 @@ function drawCells() {
       cell.state = $(this).hasClass('flagged')?'flagged':'covered';
     } else {
       let cell = findCell($(this).attr('cellID'));
-      if(cell.isBomb) endGame(); //TODO//
+      if(cell.isBomb) endGame();
       else {
         cell.state = 'uncovered';
+        $(`.cell[cellID="${cell.cellID}"]`).removeClass('covered').addClass('uncovered');
         let _bombs = cell.surroundingBombs;
         if(!$(this).hasClass('flagged')) { $(this).addClass(getClass(_bombs)).removeClass('covered').addClass('uncovered').off("click"); }
         if(_bombs == 0) cell.getSurroundingBlanks();
+        if($('.uncovered').length==totalCells) completeGame();
       }
     }
   });

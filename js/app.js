@@ -1,5 +1,12 @@
 let cells = [];
 
+class Game {
+  constructor() {
+    this.gameState = 'idle';
+  }
+}
+
+
 class Cell {
   constructor(row, col) {
     cells.push(this);
