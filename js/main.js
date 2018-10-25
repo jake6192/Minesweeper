@@ -5,15 +5,15 @@ $('.face').click(newGame);
 
 function newGame() {
   $('.container').html('');
-  width = +$('#width').val();
+  width  = +$('#width' ).val();
   height = +$('#height').val();
-  bombs = +$('#bombs').val();
+  bombs  = +$('#bombs' ).val();
   totalCells = width*height;
+
   if(bombs > totalCells) {
     endGame();
-    game.gameState = 'ended';
     bombs = 80;
-    $('#bombs').css({'background-color':'rgb(255,30, 60)'});
+    $('#bombs').css({'background-color':'rgb(255,30,60)'});
     return;
   }
   writeCSS();
@@ -40,6 +40,7 @@ function endGame() {
       $('.face > img').attr({'src':'images/face3.png'});
     }
   }
+  game.gameState = 'ended';
 }
 
 function writeCSS() {
@@ -59,6 +60,7 @@ function writeCSS() {
 }
 
 function drawCells() {
+  cells = [];
   for(let row = 1; row <= height; row++) {
     for(let col = 1; col <= width; col++) {
       let cell = new Cell(row, col);
@@ -70,16 +72,17 @@ function drawCells() {
   }).mousedown(function(event) {
     let cell = findCell($(this).attr('cellID'));
     if(event.which == 3) {
-      $(this).toggleClass('flagged');
-      cell.state = $(this).hasClass('flagged')?'flagged':'covered';
+      if($(this).hasClass('covered')) {
+        $(this).toggleClass('flagged');
+        cell.state = $(this).hasClass('flagged')?'flagged':'covered';
+      }
     } else {
-      let cell = findCell($(this).attr('cellID'));
       if(cell.isBomb) endGame();
       else {
         cell.state = 'uncovered';
         $(`.cell[cellID="${cell.cellID}"]`).removeClass('covered').addClass('uncovered');
-        let _bombs = cell.surroundingBombs;
-        if(!$(this).hasClass('flagged')) { $(this).addClass(getClass(_bombs)).removeClass('covered').addClass('uncovered').off("click"); }
+        let _bombs = cell.surroundingBombs, _class = getClass(_bombs);
+        if(!$(this).hasClass('flagged')) { $(this).addClass(`${_class} uncovered`).removeClass('covered').off("click"); }
         if(_bombs == 0) cell.getSurroundingBlanks();
         if($('.uncovered').length==totalCells) completeGame();
       }

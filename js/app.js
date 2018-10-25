@@ -9,13 +9,13 @@ class Game {
 
 class Cell {
   constructor(row, col) {
-    cells.push(this);
-    this.cellID = cells.length;
     this.row = row;
     this.col = col;
     this.surroundingBombs = 0;
     this.isBomb = false;
     this.state = 'covered';
+    cells.push(this);
+    this.cellID = cells.length;
     this.HTML = `<div class="cell covered" cellID="${this.cellID}" row="${this.row}" col="${this.col}"></div>`;
   }
 
