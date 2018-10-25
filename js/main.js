@@ -41,7 +41,8 @@ function endGame() {
   for(var i = 0; i < covered.length; i++) {
     let cell = findCell($(covered[i]).attr('cellID'));
     if(!cell.isBomb) {
-      $(`.cell[cellID="${cell.cellID}"]`).removeClass('covered').addClass(getClass(cell.surroundingBombs));
+      if(cell.state=='flagged') $(`.cell[cellID="${cell.cellID}"]`).removeClass('flagged').addClass('bomb').text('X');
+      else $(`.cell[cellID="${cell.cellID}"]`).removeClass('covered').addClass(getClass(cell.surroundingBombs));
     } else {
       $(`.cell[cellID="${cell.cellID}"]`).addClass('bomb');
       $('.button#newGame').show();

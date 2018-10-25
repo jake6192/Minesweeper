@@ -38,23 +38,23 @@ label {
   margin: 50px auto;
 }
 
-.button {
-  width: 160px;
-  height: 30px;
-  padding: 5px 15px;
-  margin: 10px auto;
-  background: url()
-}
-
 .cell {
   width: 35px;
   height: 35px;
   background-size: cover !important;
+  color: #f00;
+  line-height: 35px;
+  text-align: center;
+  font-family: cursive;
+  font-size: 40px;
 }
 .cell.covered { background: url('../images/facingDown.png') center no-repeat; }
 .cell.covered:hover,
 .cell.flagged:hover { cursor: pointer; }
-.cell.bomb { background: url('../images/bomb.png') !important; }
+.cell.bomb {
+  background: url('../images/bomb.png') no-repeat center center !important;
+  background-size: cover !important;
+}
 .cell.flagged {
   background: url('../images/flagged.png') center no-repeat !important;
   background-size: cover !important;
