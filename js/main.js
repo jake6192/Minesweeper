@@ -2,6 +2,7 @@ let game = new Game(), width, height, totalCells, bombs;
 
 $(document).ready(newGame);
 $('.face').click(newGame);
+$('*').bind("contextmenu", false);
 
 function newGame() {
   $('.container').html('');
@@ -41,15 +42,16 @@ function endGame() {
   for(var i = 0; i < covered.length; i++) {
     let cell = findCell($(covered[i]).attr('cellID'));
     if(!cell.isBomb) {
-      if(cell.state=='flagged') $(`.cell[cellID="${cell.cellID}"]`).removeClass('flagged').addClass('bomb').text('X');
+      if(cell.state=='flagged') $(`.cell[cellID="${cell.cellID}"]`).removeClass('covered flagged').addClass('bomb').text('X');
       else $(`.cell[cellID="${cell.cellID}"]`).removeClass('covered').addClass(getClass(cell.surroundingBombs));
     } else {
-      $(`.cell[cellID="${cell.cellID}"]`).addClass('bomb');
+      $(`.cell[cellID="${cell.cellID}"]`).removeClass('covered').addClass('uncovered bomb');
       $('.button#newGame').show();
       $('.face > img').attr({'src':'images/face3.png'});
     }
   }
   game.gameState = 'ended';
+  $('.cell').off("mousedown");
 }
 
 function writeCSS() {
@@ -76,9 +78,7 @@ function drawCells() {
       $('.container').append(cell.HTML);
     }
   }
-  $('.cell.covered')
-  .bind("contextmenu", false)
-  .mousedown(function(event) {
+  $('.cell.covered').mousedown(function(event) {
     let cell = findCell($(this).attr('cellID'));
     if(event.which == 3) {
       $(this).toggleClass('flagged');
@@ -86,6 +86,7 @@ function drawCells() {
     } else {
       if(cell.isBomb && cell.state!='flagged') endGame();
       else {
+        if(cell.state=='flagged') return;
         cell.state = 'uncovered';
         $(`.cell[cellID="${cell.cellID}"]`).removeClass('covered').addClass('uncovered');
         let _bombs = cell.surroundingBombs, _class = getClass(_bombs);
