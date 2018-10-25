@@ -68,3 +68,12 @@ function getRandomCell() {
   }
   return {isBomb:true};
 }
+
+function getRandomBomb_Blank() { // (Bomb OR Blank) //
+  let blankCell;
+  while(!blankCell) {
+    let cell = getRandomCell();
+    if(cell.surroundingBombs == 0) blankCell = cell;
+  }
+  return blankCell;
+}

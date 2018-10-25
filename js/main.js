@@ -20,6 +20,14 @@ function newGame() {
   drawCells();
   fillBombs();
   setupCells();
+  let cell, interval = setInterval(function() {
+    cell = getRandomBomb_Blank();
+    if(!cell.isBomb) {
+      $(`.cell[cellID="${cell.cellID}"]`).mousedown();
+      clearInterval(interval);
+      return;
+    }
+  }, 250);
   game.gameState = 'playing';
 }
 
@@ -67,22 +75,20 @@ function drawCells() {
       $('.container').append(cell.HTML);
     }
   }
-  $('.cell.covered').bind("contextmenu",function(e){
-    return false;
-  }).mousedown(function(event) {
+  $('.cell.covered')
+  .bind("contextmenu", false)
+  .mousedown(function(event) {
     let cell = findCell($(this).attr('cellID'));
     if(event.which == 3) {
-      if($(this).hasClass('covered')) {
-        $(this).toggleClass('flagged');
-        cell.state = $(this).hasClass('flagged')?'flagged':'covered';
-      }
+      $(this).toggleClass('flagged');
+      cell.state = cell.state=='flagged'?'covered':'flagged';
     } else {
-      if(cell.isBomb) endGame();
+      if(cell.isBomb && cell.state!='flagged') endGame();
       else {
         cell.state = 'uncovered';
         $(`.cell[cellID="${cell.cellID}"]`).removeClass('covered').addClass('uncovered');
         let _bombs = cell.surroundingBombs, _class = getClass(_bombs);
-        if(!$(this).hasClass('flagged')) { $(this).addClass(`${_class} uncovered`).removeClass('covered').off("click"); }
+        if(!$(this).hasClass('flagged')) { $(this).addClass(`${_class} uncovered`).removeClass('covered').off("mousedown"); }
         if(_bombs == 0) cell.getSurroundingBlanks();
         if($('.uncovered').length==totalCells) completeGame();
       }
