@@ -1,4 +1,4 @@
-let game = new Game(), width, height, totalCells, bombs;
+let _GAME_ = new Game();
 
 $(document).ready(newGame);
 $('.face').click(newGame);
@@ -6,21 +6,21 @@ $('*').bind("contextmenu", false);
 
 function newGame() {
   $('.container').html('');
-  width  = +$('#width' ).val();
-  height = +$('#height').val();
-  bombs  = +$('#bombs' ).val();
-  totalCells = width*height;
+  _GAME_.width  = +$('#width' ).val();
+  _GAME_.height = +$('#height').val();
+  _GAME_.bombs  = +$('#bombs' ).val();
+  _GAME_.totalCells = _GAME_.width*_GAME_.height;
 
-  if(bombs > totalCells) {
+  if(_GAME_.bombs > _GAME_.totalCells) {
     endGame();
-    bombs = 80;
+    _GAME_.bombs = 80;
     $('#bombs').css({'background-color':'rgb(255,30,60)'});
     return;
   }
   writeCSS();
-  drawCells();
-  fillBombs();
-  setupCells();
+  _GAME_.drawCells();
+  _GAME_.fillBombs();
+  _GAME_.setupCells();
   let cell, interval = setInterval(function() {
     cell = getRandomBomb_Blank();
     if(!cell.isBomb) {
@@ -29,7 +29,7 @@ function newGame() {
       return;
     }
   }, 250);
-  game.gameState = 'playing';
+  _GAME_.gameState = 'playing';
 }
 
 function completeGame() {
@@ -40,92 +40,46 @@ function completeGame() {
 function endGame() {
   let covered = $('.covered');
   for(var i = 0; i < covered.length; i++) {
-    let cell = findCell($(covered[i]).attr('cellID'));
+    let cell = _GAME_.findCell($(covered[i]).attr('cellID'));
     if(!cell.isBomb) {
       if(cell.state=='flagged') $(`.cell[cellID="${cell.cellID}"]`).removeClass('covered flagged').addClass('bomb').text('X');
-      else $(`.cell[cellID="${cell.cellID}"]`).removeClass('covered').addClass(getClass(cell.surroundingBombs));
+      else $(`.cell[cellID="${cell.cellID}"]`).removeClass('covered').addClass(`blank_${cell.surroundingBombs}`);
     } else {
       $(`.cell[cellID="${cell.cellID}"]`).removeClass('covered').addClass('uncovered bomb');
       $('.button#newGame').show();
       $('.face > img').attr({'src':'images/face3.png'});
     }
   }
-  game.gameState = 'ended';
+  _GAME_.gameState = 'ended';
   $('.cell').off("mousedown");
 }
 
+function clickEvent(event) {
+  let cell = _GAME_.findCell($(this).attr('cellID'));
+  if(event.which == 3) {
+    $(this).toggleClass('flagged');
+    cell.state = cell.state=='flagged'?'covered':'flagged';
+  } else {
+    if(cell.isBomb && cell.state!='flagged') endGame();
+    else {
+      if(cell.state=='flagged') return;
+      cell.state = 'uncovered';
+      $(`.cell[cellID="${cell.cellID}"]`).removeClass('covered').addClass('uncovered');
+      let _bombs = cell.surroundingBombs;
+      if(!$(this).hasClass('flagged')) { $(this).addClass(`blank_${_bombs} uncovered`).removeClass('covered').off("mousedown"); }
+      if(_bombs == 0) cell.getSurroundingBlanks();
+      if($('.uncovered').length==_GAME_.totalCells) completeGame();
+    }
+  }
+}
+
 function writeCSS() {
-  let HTMLCSS = ``;
-  HTMLCSS += `<style type="text/css">`;
+  let HTMLCSS;
+  HTMLCSS  = `<style type="text/css">`;
   HTMLCSS +=   `.container {`;
-  HTMLCSS +=     `max-width: ${35*width}px;`;
-  HTMLCSS +=     `max-height: ${35*height}px;`;
-  HTMLCSS +=     `margin: 50px auto;`;
-  HTMLCSS +=     `background-color: rgb(255, 255, 255);`;
-  HTMLCSS +=     `border: 3px groove #999;`;
-  HTMLCSS +=     `display: flex;`;
-  HTMLCSS +=     `flex-wrap: wrap;`;
+  HTMLCSS +=     `max-width: ${35*_GAME_.width}px;`;
+  HTMLCSS +=     `max-height: ${35*_GAME_.height}px;`;
   HTMLCSS +=   `}`;
   HTMLCSS += `</style>`;
   $('head').append(HTMLCSS);
-}
-
-function drawCells() {
-  cells = [];
-  for(let row = 1; row <= height; row++) {
-    for(let col = 1; col <= width; col++) {
-      let cell = new Cell(row, col);
-      $('.container').append(cell.HTML);
-    }
-  }
-  $('.cell.covered').mousedown(function(event) {
-    let cell = findCell($(this).attr('cellID'));
-    if(event.which == 3) {
-      $(this).toggleClass('flagged');
-      cell.state = cell.state=='flagged'?'covered':'flagged';
-    } else {
-      if(cell.isBomb && cell.state!='flagged') endGame();
-      else {
-        if(cell.state=='flagged') return;
-        cell.state = 'uncovered';
-        $(`.cell[cellID="${cell.cellID}"]`).removeClass('covered').addClass('uncovered');
-        let _bombs = cell.surroundingBombs, _class = getClass(_bombs);
-        if(!$(this).hasClass('flagged')) { $(this).addClass(`${_class} uncovered`).removeClass('covered').off("mousedown"); }
-        if(_bombs == 0) cell.getSurroundingBlanks();
-        if($('.uncovered').length==totalCells) completeGame();
-      }
-    }
-  });
-}
-
-function getClass(num) {
-  switch(num) {
-    case 0: return 'blank_0'; break;
-    case 1: return 'blank_1'; break;
-    case 2: return 'blank_2'; break;
-    case 3: return 'blank_3'; break;
-    case 4: return 'blank_4'; break;
-    case 5: return 'blank_5'; break;
-    case 6: return 'blank_6'; break;
-    case 7: return 'blank_7'; break;
-    case 8: return 'blank_8'; break;
-  }
-}
-
-function fillBombs() {
-  let setBombs = bombs;
-  while(setBombs > 0) {
-    let cell = getRandomCell();
-    if(!cell.isBomb) {
-      cell.isBomb = true;
-      setBombs--;
-    }
-  }
-}
-
-function setupCells() {
-  for(let i = 0; i < cells.length; i++) {
-    if(cells[i].isBomb) continue;
-    cells[i].getSurroundingBombs();
-  }
 }
