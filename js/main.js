@@ -35,6 +35,7 @@ function newGame() {
 function completeGame() {
   $('.covered').addClass('bomb');
   $('.face > img').attr({'src':'images/face2.png'});
+  $('.cell').off("mousedown");
 }
 
 function endGame() {
@@ -68,7 +69,7 @@ function clickEvent(event) {
       let _bombs = cell.surroundingBombs;
       if(!$(this).hasClass('flagged')) { $(this).addClass(`blank_${_bombs} uncovered`).removeClass('covered').off("mousedown"); }
       if(_bombs == 0) cell.getSurroundingBlanks();
-      if($('.uncovered').length==_GAME_.totalCells) completeGame();
+      if($('.uncovered').length==(_GAME_.totalCells-_GAME_.bombs)) completeGame();
     }
   }
 }
