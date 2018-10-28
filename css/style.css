@@ -47,11 +47,8 @@ label {
 }
 
 .cell {
-  width: 35px;
-  height: 35px;
   background-size: cover !important;
   color: #f00;
-  line-height: 35px;
   text-align: center;
   font-family: cursive;
   font-size: 40px;

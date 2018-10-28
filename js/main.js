@@ -1,23 +1,30 @@
-let _GAME_ = new Game();
+const _GAME_ = new Game(), cellWidth = 35;
 
 $(document).ready(newGame);
 $('.face').click(newGame);
 $('*').bind("contextmenu", false);
 
+function appendCSS(selector, properties) {
+  let HTMLCSS = `${selector} {`;
+  for(var i in properties) HTMLCSS += ` ${properties[i][0]}: ${properties[i][1]}${properties[i][2]?'px':''};`;
+  HTMLCSS += ` }`;
+  $('style').append(HTMLCSS);
+}
+
 function newGame() {
-  $('.container').html('');
+  $('style, .container').html('');
   _GAME_.width  = +$('#width' ).val();
   _GAME_.height = +$('#height').val();
   _GAME_.bombs  = +$('#bombs' ).val();
   _GAME_.totalCells = _GAME_.width*_GAME_.height;
-
   if(_GAME_.bombs > _GAME_.totalCells) {
     endGame();
     _GAME_.bombs = 80;
     $('#bombs').css({'background-color':'rgb(255,30,60)'});
     return;
   }
-  writeCSS();
+  appendCSS('.container', [['max-width', (cellWidth*_GAME_.width), true], ['max-height', (cellWidth*_GAME_.height), true]]);
+  appendCSS('.cell', [['width', cellWidth, true], ['height', cellWidth, true], ['line-height', cellWidth, true]]);
   _GAME_.drawCells();
   _GAME_.fillBombs();
   _GAME_.setupCells();
@@ -72,15 +79,4 @@ function clickEvent(event) {
       if($('.uncovered').length==(_GAME_.totalCells-_GAME_.bombs)) completeGame();
     }
   }
-}
-
-function writeCSS() {
-  let HTMLCSS;
-  HTMLCSS  = `<style type="text/css">`;
-  HTMLCSS +=   `.container {`;
-  HTMLCSS +=     `max-width: ${35*_GAME_.width}px;`;
-  HTMLCSS +=     `max-height: ${35*_GAME_.height}px;`;
-  HTMLCSS +=   `}`;
-  HTMLCSS += `</style>`;
-  $('head').append(HTMLCSS);
 }
