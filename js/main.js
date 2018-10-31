@@ -1,4 +1,5 @@
 const _GAME_ = new Game(), cellWidth = 35;
+let timerInterval, timer = 0;
 
 $(document).ready(newGame);
 $('.face').click(newGame);
@@ -12,6 +13,7 @@ function appendCSS(selector, properties) {
 }
 
 function newGame() {
+  timer = 0;
   $('style, .container').html('');
   _GAME_.width  = +$('#width' ).val();
   _GAME_.height = +$('#height').val();
@@ -23,8 +25,17 @@ function newGame() {
     $('#bombs').css({'background-color':'rgb(255,30,60)'});
     return;
   }
+  $('.counter#remainingBombs').html(_GAME_.bombs);
+  $('.counter#timer').html('000');
+  timerInterval = setInterval(function() {
+    timer++;
+    $('.counter#timer').html(timer<10?`00${timer}`:timer<100?`0${timer}`:timer);
+    if(timer===999) clearInterval(timerInterval);
+  }, 1000);
   appendCSS('.container', [['max-width', (cellWidth*_GAME_.width), true], ['max-height', (cellWidth*_GAME_.height), true]]);
   appendCSS('.cell', [['width', cellWidth, true], ['height', cellWidth, true], ['line-height', cellWidth, true]]);
+  appendCSS('.infoContainer', [['margin', `25px calc(50% - ${(cellWidth*_GAME_.width)/2}px)`, false]]);
+  appendCSS('.btn_container', [['margin', `50px calc(50% - ${(cellWidth*_GAME_.width)/2}px)`, false]]);
   _GAME_.drawCells();
   _GAME_.fillBombs();
   _GAME_.setupCells();
@@ -46,6 +57,7 @@ function completeGame() {
 }
 
 function endGame() {
+  clearInterval(timerInterval);
   let covered = $('.covered');
   for(var i = 0; i < covered.length; i++) {
     let cell = _GAME_.findCell($(covered[i]).attr('cellID'));
@@ -63,10 +75,12 @@ function endGame() {
 }
 
 function clickEvent(event) {
-  let cell = _GAME_.findCell($(this).attr('cellID'));
+  let cell = _GAME_.findCell($(this).attr('cellID')), remainingBombs = +$('.counter#remainingBombs').html();
   if(event.which == 3) {
     $(this).toggleClass('flagged');
     cell.state = cell.state=='flagged'?'covered':'flagged';
+    if(cell.state == 'flagged') $('.counter#remainingBombs').html(remainingBombs-1);
+    else $('.counter#remainingBombs').html(remainingBombs+1);
   } else {
     if(cell.isBomb && cell.state!='flagged') endGame();
     else {

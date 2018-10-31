@@ -17,13 +17,16 @@ label {
   border-top: 1px dotted #222;
 }
 
+.infoContainer {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+}
+
 .face {
   width: 50px;
   height: 50px;
   background-color: rgba(140,140,140,0.95);
-  margin: 0 auto;
-  padding: 3px
-  border: 6px groove #ccc;
 }
 .face > img {
   width: 100%;
@@ -31,8 +34,22 @@ label {
   margin: auto;
 }
 
+.counter {
+  width: 100px;
+  height: 50px;
+  padding: 3px;
+  border: 2px inset #1d1;
+  background-color: #313131;
+  color: #6aa;
+  font-family: monospace;
+  font-size: 30px;
+  font-weight: 600;
+  line-height: 50px;
+  text-align: center;
+}
+
 .container {
-  margin: 50px auto;
+  margin: 0 auto 50px;
   background-color: rgb(255, 255, 255);
   border: 3px groove #999;
   display: flex;
@@ -42,8 +59,6 @@ label {
 .btn_container {
   display: flex;
   flex-direction: column;
-  width: 40%;
-  margin: 50px auto;
 }
 
 .cell {
