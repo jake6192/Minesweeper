@@ -37,7 +37,6 @@ function newGame() {
   _GAME_.drawCells();
   if(_GAME_.bombs > _GAME_.totalCells/1.25) {
     _GAME_.tooManyBombs();
-    return;
   } else {
     _GAME_.fillBombs();
     _GAME_.setupCells();
