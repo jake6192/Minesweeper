@@ -35,10 +35,10 @@ function newGame() {
     $('.counter#timer').html(timer<10?`00${timer}`:timer<100?`0${timer}`:timer);
     if(timer > 999) clearInterval(timerInterval);
   }, 1000);
-  appendCSS('.container', [['max-width', (cellWidth*_GAME_.width), true], ['max-height', (cellWidth*_GAME_.height), true]]);
-  appendCSS('.cell', [['width', cellWidth, true], ['height', cellWidth, true], ['line-height', cellWidth, true]]);
-  appendCSS('.infoContainer', [['margin', `25px calc(50% - ${(cellWidth*_GAME_.width)/2}px)`, false]]);
-  appendCSS('.btn_container', [['margin', `50px calc(50% - ${(cellWidth*_GAME_.width)/2}px)`, false]]);
+  appendCSS('.container', [['max-width', (_GAME_.cellWidth*_GAME_.width), true], ['max-height', (_GAME_.cellWidth*_GAME_.height), true]]);
+  appendCSS('.cell', [['width', _GAME_.cellWidth, true], ['height', _GAME_.cellWidth, true], ['line-height', _GAME_.cellWidth, true]]);
+  appendCSS('.infoContainer', [['margin', `25px calc(50% - ${(_GAME_.cellWidth*_GAME_.width)/2}px)`, false]]);
+  appendCSS('.btn_container', [['margin', `50px calc(50% - ${(_GAME_.cellWidth*_GAME_.width)/2}px)`, false]]);
   _GAME_.drawCells();
   _GAME_.fillBombs();
   _GAME_.setupCells();
