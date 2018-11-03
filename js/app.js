@@ -57,7 +57,7 @@ class Game {
 
   tooManyBombs() {
     endGame();
-    this.bombs = this.totalCells/1.25;
+    this.bombs = Math.floor(this.totalCells*0.75);
     $('#bombs').val(this.bombs).css({'background-color':'rgb(255,30,60)'});
   }
 }
