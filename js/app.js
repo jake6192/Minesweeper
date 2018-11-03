@@ -57,16 +57,8 @@ class Game {
 
   tooManyBombs() {
     endGame();
-    this.bombs = 80;
-    $('#bombs').val(+'80').css({'background-color':'rgb(255,30,60)'});
-    let val = +'80';
-    $('#bombs').mouseenter(function() {
-      val = +$(this).val();
-      $(this).val('Too many bombs.');
-    }).mouseleave(function() {
-      $(this).val(val);
-    });
-    return;
+    this.bombs = this.totalCells/1.25;
+    $('#bombs').val(this.bombs).css({'background-color':'rgb(255,30,60)'});
   }
 }
 

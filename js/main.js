@@ -35,8 +35,10 @@ function newGame() {
   appendCSS('.infoContainer', [['margin', `25px calc(50% - ${(_GAME_.cellWidth*_GAME_.width)/2}px)`, false]]);
   appendCSS('.btn_container', [['margin', `50px calc(50% - ${(_GAME_.cellWidth*_GAME_.width)/2}px)`, false]]);
   _GAME_.drawCells();
-  if(_GAME_.bombs > _GAME_.totalCells) _GAME_.tooManyBombs();
-  else {
+  if(_GAME_.bombs > _GAME_.totalCells/1.25) {
+    _GAME_.tooManyBombs();
+    return;
+  } else {
     _GAME_.fillBombs();
     _GAME_.setupCells();
     let cell, interval = setInterval(function() {
