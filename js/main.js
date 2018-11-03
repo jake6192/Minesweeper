@@ -1,5 +1,5 @@
-const _GAME_ = new Game(), cellWidth = 35;
-let timerInterval, timer = 0;
+const _GAME_ = new Game();
+let timerInterval, timer;
 
 $(document).ready(newGame);
 $('.face').click(newGame);
@@ -13,11 +13,15 @@ function appendCSS(selector, properties) {
 }
 
 function newGame() {
+  if(timerInterval) clearInterval(timerInterval);
   timer = 0;
   $('style, .container').html('');
-  _GAME_.width  = +$('#width' ).val();
-  _GAME_.height = +$('#height').val();
-  _GAME_.bombs  = +$('#bombs' ).val();
+  $('#bombs').removeAttr('style');
+  $('.face img').attr({ "src": "images/face1.png" });
+  _GAME_.width      = +$('#width' ).val();
+  _GAME_.height     = +$('#height').val();
+  _GAME_.cellWidth  = +$('#cellWidth').val();
+  _GAME_.bombs      = +$('#bombs' ).val();
   _GAME_.totalCells = _GAME_.width*_GAME_.height;
   if(_GAME_.bombs > _GAME_.totalCells) {
     endGame();
@@ -26,11 +30,10 @@ function newGame() {
     return;
   }
   $('.counter#remainingBombs').html(_GAME_.bombs);
-  $('.counter#timer').html('000');
   timerInterval = setInterval(function() {
     timer++;
     $('.counter#timer').html(timer<10?`00${timer}`:timer<100?`0${timer}`:timer);
-    if(timer===999) clearInterval(timerInterval);
+    if(timer > 999) clearInterval(timerInterval);
   }, 1000);
   appendCSS('.container', [['max-width', (cellWidth*_GAME_.width), true], ['max-height', (cellWidth*_GAME_.height), true]]);
   appendCSS('.cell', [['width', cellWidth, true], ['height', cellWidth, true], ['line-height', cellWidth, true]]);
@@ -51,6 +54,7 @@ function newGame() {
 }
 
 function completeGame() {
+  clearInterval(timerInterval);
   $('.covered').addClass('bomb');
   $('.face > img').attr({'src':'images/face2.png'});
   $('.cell').off("mousedown");
@@ -90,7 +94,7 @@ function clickEvent(event) {
       let _bombs = cell.surroundingBombs;
       if(!$(this).hasClass('flagged')) { $(this).addClass(`blank_${_bombs} uncovered`).removeClass('covered').off("mousedown"); }
       if(_bombs == 0) cell.getSurroundingBlanks();
-      if($('.uncovered').length==(_GAME_.totalCells-_GAME_.bombs)) completeGame();
+      if($('.uncovered').length==(_GAME_.totalCells-_GAME_.bombs)+1) completeGame();
     }
   }
 }

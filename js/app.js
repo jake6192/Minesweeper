@@ -4,6 +4,7 @@ class Game {
     this.cells = [];
     this.width = 0;
     this.height = 0;
+    this.cellWidth = 0;
     this.totalCells = this.width*this.height;
     this.bombs = 0;
   }
