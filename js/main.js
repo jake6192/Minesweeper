@@ -18,6 +18,7 @@ function newGame() {
   $('style, .container').html('');
   $('#bombs').removeAttr('style');
   $('.face img').attr({ "src": "images/face1.png" });
+  $('#bombs').off("mouseleave mouseenter");
   _GAME_.width      = +$('#width' ).val();
   _GAME_.height     = +$('#height').val();
   _GAME_.cellWidth  = +$('#cellWidth').val();
