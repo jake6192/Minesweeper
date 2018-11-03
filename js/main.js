@@ -23,12 +23,6 @@ function newGame() {
   _GAME_.cellWidth  = +$('#cellWidth').val();
   _GAME_.bombs      = +$('#bombs' ).val();
   _GAME_.totalCells = _GAME_.width*_GAME_.height;
-  if(_GAME_.bombs > _GAME_.totalCells) {
-    endGame();
-    _GAME_.bombs = 80;
-    $('#bombs').css({'background-color':'rgb(255,30,60)'});
-    return;
-  }
   $('.counter#remainingBombs').html(_GAME_.bombs);
   timerInterval = setInterval(function() {
     timer++;
@@ -40,17 +34,20 @@ function newGame() {
   appendCSS('.infoContainer', [['margin', `25px calc(50% - ${(_GAME_.cellWidth*_GAME_.width)/2}px)`, false]]);
   appendCSS('.btn_container', [['margin', `50px calc(50% - ${(_GAME_.cellWidth*_GAME_.width)/2}px)`, false]]);
   _GAME_.drawCells();
-  _GAME_.fillBombs();
-  _GAME_.setupCells();
-  let cell, interval = setInterval(function() {
-    cell = getRandomBomb_Blank();
-    if(!cell.isBomb) {
-      $(`.cell[cellID="${cell.cellID}"]`).mousedown();
-      clearInterval(interval);
-      return;
-    }
-  }, 250);
-  _GAME_.gameState = 'playing';
+  if(_GAME_.bombs > _GAME_.totalCells) _GAME_.tooManyBombs();
+  else {
+    _GAME_.fillBombs();
+    _GAME_.setupCells();
+    let cell, interval = setInterval(function() {
+      cell = getRandomBomb_Blank();
+      if(!cell.isBomb) {
+        $(`.cell[cellID="${cell.cellID}"]`).mousedown();
+        clearInterval(interval);
+        return;
+      }
+    }, 250);
+    _GAME_.gameState = 'playing';
+  }
 }
 
 function completeGame() {

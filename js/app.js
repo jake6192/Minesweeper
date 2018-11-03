@@ -54,6 +54,13 @@ class Game {
     }
     return;
   }
+
+  tooManyBombs() {
+    endGame();
+    this.bombs = 80;
+    $('#bombs').html('80').css({'background-color':'rgb(255,30,60)'});
+    return;
+  }
 }
 
 
