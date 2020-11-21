@@ -93,7 +93,7 @@ function clickEvent(event) {
       let _bombs = cell.surroundingBombs;
       if(!$(this).hasClass('flagged')) { $(this).addClass(`blank_${_bombs} uncovered`).removeClass('covered').off("mousedown"); }
       if(_bombs == 0) cell.getSurroundingBlanks();
-      if($('.uncovered').length==(_GAME_.totalCells-_GAME_.bombs)+1) completeGame();
+      if($('.covered').length==_GAME_.bombs) completeGame();
     }
   }
 }
