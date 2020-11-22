@@ -48,6 +48,16 @@ label {
   text-align: center;
 }
 
+#undo {
+  width: 190px;
+  border: 3px groove #1d1;
+  margin-right: -280px;
+}
+#undo:hover {
+  cursor: pointer !important;
+  border-style: inset !important;
+}
+
 .container {
   margin: 0 auto 50px;
   background-color: rgb(255, 255, 255);

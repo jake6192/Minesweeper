@@ -7,6 +7,7 @@ class Game {
     this.cellWidth = 0;
     this.totalCells = this.width*this.height;
     this.bombs = 0;
+    this.timer = 0;
   }
 
   getRandomCell() {

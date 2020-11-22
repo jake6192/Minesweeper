@@ -1,5 +1,6 @@
-const _GAME_ = new Game();
-let timerInterval, timer;
+let _GAME_ = new Game(),
+timerInterval,
+previousGameState = [];
 
 $(document).ready(newGame);
 $('.face').click(newGame);
@@ -14,7 +15,7 @@ function appendCSS(selector, properties) {
 
 function newGame() {
   if(timerInterval) clearInterval(timerInterval);
-  timer = 0;
+  _GAME_.timer = 0;
   $('style, .container').html('');
   $('#bombs').removeAttr('style');
   $('.face img').attr({ "src": "images/face1.png" });
@@ -26,9 +27,9 @@ function newGame() {
   _GAME_.totalCells = _GAME_.width*_GAME_.height;
   $('.counter#remainingBombs').html(_GAME_.bombs);
   timerInterval = setInterval(function() {
-    timer++;
-    $('.counter#timer').html(timer<10?`00${timer}`:timer<100?`0${timer}`:timer);
-    if(timer > 999) clearInterval(timerInterval);
+    _GAME_.timer++;
+    $('.counter#timer').html(_GAME_.timer<10?`00${_GAME_.timer}`:_GAME_.timer<100?`0${_GAME_.timer}`:_GAME_.timer);
+    if(_GAME_.timer > 999) clearInterval(timerInterval);
   }, 1000);
   appendCSS('.container', [['max-width', (_GAME_.cellWidth*_GAME_.width), true], ['max-height', (_GAME_.cellWidth*_GAME_.height), true]]);
   appendCSS('.cell', [['width', _GAME_.cellWidth, true], ['height', _GAME_.cellWidth, true], ['line-height', _GAME_.cellWidth, true]]);
@@ -45,15 +46,35 @@ function newGame() {
       if(!cell.isBomb) {
         $(`.cell[cellID="${cell.cellID}"]`).mousedown();
         clearInterval(interval);
+        $('#undo').hide();
         return;
       }
     }, 250);
     _GAME_.gameState = 'playing';
+    previousGameState[0] = $('.container').html();
+    previousGameState[1] = _GAME_;
+  }
+}
+
+function undoMove() {
+  if(previousGameState !== []) {
+    $('.container').html(previousGameState[0]);
+    _GAME_ = previousGameState[1];
+    previousGameState = [];
+    $('.cell.covered').mousedown(clickEvent);
+    $('#undo').hide();
+
+    if(!timerInterval) timerInterval = setInterval(function() {
+      _GAME_.timer++;
+      $('.counter#timer').html(_GAME_.timer<10?`00${_GAME_.timer}`:_GAME_.timer<100?`0${_GAME_.timer}`:_GAME_.timer);
+      if(_GAME_.timer > 999) clearInterval(timerInterval);
+    }, 1000);
   }
 }
 
 function completeGame() {
   clearInterval(timerInterval);
+  timerInterval = null;
   $('.covered').addClass('bomb');
   $('.face > img').attr({'src':'images/face2.png'});
   $('.cell').off("mousedown");
@@ -61,6 +82,7 @@ function completeGame() {
 
 function endGame() {
   clearInterval(timerInterval);
+  timerInterval = null;
   let covered = $('.covered');
   for(var i = 0; i < covered.length; i++) {
     let cell = _GAME_.findCell($(covered[i]).attr('cellID'));
@@ -85,6 +107,10 @@ function clickEvent(event) {
     if(cell.state == 'flagged') $('.counter#remainingBombs').html(remainingBombs-1);
     else $('.counter#remainingBombs').html(remainingBombs+1);
   } else {
+    previousGameState[0] = $('.container').html();
+    previousGameState[1] = _GAME_;
+    $('#undo').show();
+
     if(cell.isBomb && cell.state!='flagged') endGame();
     else {
       if(cell.state=='flagged') return;
