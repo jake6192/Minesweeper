@@ -75,7 +75,7 @@ function undoMove() {
 function completeGame() {
   clearInterval(timerInterval);
   timerInterval = null;
-  $('.covered').addClass('bomb');
+  $('.covered, .flagged').addClass('bomb');
   $('.face > img').attr({'src':'images/face2.png'});
   $('.cell').off("mousedown");
 }
@@ -87,7 +87,7 @@ function endGame() {
   for(var i = 0; i < covered.length; i++) {
     let cell = _GAME_.findCell($(covered[i]).attr('cellID'));
     if(!cell.isBomb) {
-      if(cell.state=='flagged') $(`.cell[cellID="${cell.cellID}"]`).removeClass('covered flagged').addClass('bomb').text('X');
+      if(cell.state=='flagged') $(`.cell[cellID="${cell.cellID}"]`).removeClass('covered flagged').addClass('bomb incorrect').text('X');
       else $(`.cell[cellID="${cell.cellID}"]`).removeClass('covered').addClass(`blank_${cell.surroundingBombs}`);
     } else {
       $(`.cell[cellID="${cell.cellID}"]`).removeClass('covered').addClass('uncovered bomb');
@@ -95,6 +95,7 @@ function endGame() {
       $('.face > img').attr({'src':'images/face3.png'});
     }
   }
+  $('.covered, .flagged').addClass('bomb');
   _GAME_.gameState = 'ended';
   $('.cell').off("mousedown");
 }
@@ -111,8 +112,10 @@ function clickEvent(event) {
     previousGameState[1] = _GAME_;
     $('#undo').show();
 
-    if(cell.isBomb && cell.state!='flagged') endGame();
-    else {
+    if(cell.isBomb && cell.state!='flagged') {
+      $(this).addClass('detonated');
+      endGame();
+    } else {
       if(cell.state=='flagged') return;
       cell.state = 'uncovered';
       $(`.cell[cellID="${cell.cellID}"]`).removeClass('covered').addClass('uncovered');

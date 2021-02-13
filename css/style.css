@@ -81,14 +81,25 @@ label {
 .cell.covered { background: url('../images/facingDown.png') center no-repeat; }
 .cell.covered:hover,
 .cell.flagged:hover { cursor: pointer; }
-.cell.bomb {
-  background: url('../images/bomb.png') no-repeat center center !important;
-  background-size: cover !important;
-}
 .cell.flagged {
   background: url('../images/flagged.png') center no-repeat !important;
   background-size: cover !important;
 }
+.cell.bomb { position: relative; }
+.cell.bomb::after {
+  position: absolute;
+  content: "";
+  background: url('../images/bomb.png') no-repeat center center !important;
+  background-size: cover !important;
+  opacity: 0.50;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  z-index: 1;
+}
+.cell.bomb.detonated::after { opacity: 1.00 !important; }
+.cell.bomb.incorrect::after { opacity: 0.75 !important; }
 .cell.blank_0 { background: url('../images/0.png'); }
 .cell.blank_1 { background: url('../images/1.png'); }
 .cell.blank_2 { background: url('../images/2.png'); }
