@@ -99,7 +99,7 @@ label {
   z-index: 1;
 }
 .cell.bomb.detonated::after { opacity: 1.00 !important; }
-.cell.bomb.incorrect::after { opacity: 0.75 !important; }
+.cell.bomb.incorrect::after { opacity: 0.25 !important; }
 .cell.blank_0 { background: url('../images/0.png'); }
 .cell.blank_1 { background: url('../images/1.png'); }
 .cell.blank_2 { background: url('../images/2.png'); }
